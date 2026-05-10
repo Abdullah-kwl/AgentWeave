@@ -1,0 +1,14 @@
+[project]
+name = "Agentweave"
+version = "0.1.0"
+description = "AgentWeave An agentic AI platform that weaves memory, tools, RAG, MCP servers, and autonomous research agents into one intelligent system."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "black>=26.3.1",
+    "pre-commit>=4.6.0",
+    "pylint>=4.0.5",
+]
