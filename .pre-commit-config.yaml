@@ -9,8 +9,9 @@ repos:
 
       - id: pylint
         name: pylint checker
-        entry: uv run pylint --rcfile=.pylintrc
+        entry: uv run python -m pylint
         language: system
+        args: ["--rcfile=.pylintrc"]
         types: [python]
 
   - repo: https://github.com/astral-sh/uv-pre-commit
@@ -27,4 +28,5 @@ repos:
             "--no-hashes",
           ]
 
+# uv run pre-commit install
 # uv run pre-commit run --all-files
