@@ -1,0 +1,30 @@
+repos:
+  - repo: local
+    hooks:
+      - id: black
+        name: black formatter
+        entry: uv run black
+        language: system
+        types: [python]
+
+      - id: pylint
+        name: pylint checker
+        entry: uv run pylint --rcfile=.pylintrc
+        language: system
+        types: [python]
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.12
+    hooks:
+      - id: uv-lock
+        always_run: true
+
+      - id: uv-export
+        always_run: true
+        args:
+          [
+            "--output-file=requirements.txt",
+            "--no-hashes",
+          ]
+
+# uv run pre-commit run --all-files
