@@ -11,7 +11,6 @@ repos:
         name: pylint checker
         entry: uv run python -m pylint
         language: system
-        args: ["--rcfile=.pylintrc"]
         types: [python]
 
   - repo: https://github.com/astral-sh/uv-pre-commit

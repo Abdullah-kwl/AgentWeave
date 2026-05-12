@@ -21,4 +21,15 @@ dev = [
 ]
 
 [tool.black]
+line-length = 120
 target-version = ["py312"]
+
+[tool.pylint.format]
+max-line-length = 120
+
+[tool.pylint.messages_control]
+disable = [
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
