@@ -1,10 +1,10 @@
-"""Main module for AgentWeave application."""
+"""Main API entry point for AgentWeave."""
 
+from fastapi import FastAPI
+from app.api import chat
 
-def main():
-    """Entry point of the application."""
-    print("Hello World")
+app = FastAPI()
 
+app.include_router(chat.router, prefix="/api/v1", tags=["chat"])
 
-if __name__ == "__main__":
-    main()
+# uv run uvicorn app.main:app --reload
