@@ -33,6 +33,15 @@ class Config:
     max_tokens: int = 1000
 
 
+@dataclass
+class AppConfig:
+    """FastAPI configuration."""
+
+    fastapi_url: str = "http://localhost:8000/api/v1/chat"
+    fastapi_stream_url: str = "http://localhost:8000/api/v1/chat/stream"
+
+
 secrets = Secrets()
 config = Config()
 other = OtherConfig()
+app_config = AppConfig()
