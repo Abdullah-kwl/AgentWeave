@@ -2,10 +2,9 @@
 
 from fastapi import APIRouter
 from fastapi import HTTPException
-
-# from fastapi.responses import StreamingResponse
+from fastapi.responses import StreamingResponse
 from app.api.schemas import Messages, ChatResponse
-from app.api.helper import chat_with_agent
+from app.api.helper import chat_with_agent, chat_with_agent_stream
 
 router = APIRouter()
 
@@ -20,13 +19,14 @@ async def chat(message: Messages):
         raise HTTPException(status_code=500, detail=str(e)) from e
 
 
-# @router.post("/chat/stream")  # no response_model here for streaming endpoint
-# async def stream_chat(message: Messages):
-#     return StreamingResponse(
-#         chat_with_agent_stream(message.message, message.session_id),  # no await
-#         media_type="text/event-stream",
-#         headers={
-#             "Cache-Control": "no-cache",
-#             "X-Accel-Buffering": "no",
-#         }
-#     )
+@router.post("/chat/stream")
+async def stream_chat(message: Messages):
+    """Endpoint for streaming chat responses from the agent in SSE format."""
+    return StreamingResponse(
+        chat_with_agent_stream(message.message, message.session_id),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
