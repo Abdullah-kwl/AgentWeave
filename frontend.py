@@ -12,8 +12,8 @@ st.set_page_config(
     layout="centered",
 )
 
-FASTAPI_URL = app_config.FASTAPI_URL
-FASTAPI_STREAM_URL = app_config.FASTAPI_STREAM_URL
+FASTAPI_URL = app_config.fastapi_url  # pylint: disable=no-name-in-module
+FASTAPI_STREAM_URL = app_config.fastapi_stream_url  # pylint: disable=no-name-in-module
 
 
 # SESSION STATE
