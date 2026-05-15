@@ -33,17 +33,27 @@ async def chat_with_agent(message: str, session_id: str):
 
 
 async def chat_with_agent_stream(message: str, session_id: str):
-    """Stream chat responses from the agent in OpenAI format."""
+    """Stream chat responses from the agent in OpenAI SSE format."""
+
     try:
-        async for msg, _ in chatbot.astream(
-            {"messages": [{"role": "user", "content": message}]},
-            {"configurable": {"thread_id": session_id}},
-            stream_mode="messages",
+        config = {"configurable": {"thread_id": session_id}}
+
+        msg_state = {"messages": [HumanMessage(content=message)]}
+
+        async for chunk in chatbot.astream(
+            msg_state,
+            config=config,
+            version="v2",
+            stream_mode=["messages"],
         ):
-            if isinstance(msg, AIMessageChunk) and msg.content:
-                # escape newlines so they don't break SSE format
-                content = msg.content.replace("\n", "\\n")
-                yield f"data: {content}\n\n"
+            if chunk["type"] == "messages":
+                msg, _ = chunk["data"]
+
+                if isinstance(msg, AIMessageChunk) and msg.content:
+                    # escape newlines for SSE
+                    content = msg.content.replace("\n", "\\n")
+
+                    yield f"data: {content}\n\n"
 
         yield "data: [DONE]\n\n"
 
