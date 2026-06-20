@@ -6,6 +6,7 @@ from app.ai_layer.agent import chatbot
 
 def to_openai_format(messages):
     """Convert LangChain message format to OpenAI format."""
+
     formatted = []
 
     for msg in messages:
@@ -25,6 +26,7 @@ def to_openai_format(messages):
 
 async def chat_with_agent(message: str, session_id: str):
     """Chat with the agent and return the response in OpenAI format. and follow the async pattern."""
+
     results = await chatbot.ainvoke(
         {"messages": [{"role": "user", "content": message}]},
         {"configurable": {"thread_id": session_id}},
@@ -59,3 +61,11 @@ async def chat_with_agent_stream(message: str, session_id: str):
 
     except Exception as e:  # pylint: disable=broad-exception-caught
         yield f"data: ERROR: {str(e)}\n\n"
+
+
+async def old_chat_history(session_id: str):
+    """Retrieve the chat history for a given session."""
+
+    config = {"configurable": {"thread_id": session_id}}
+    old_messages = chatbot.get_state(config=config)
+    return to_openai_format(old_messages.values["messages"])

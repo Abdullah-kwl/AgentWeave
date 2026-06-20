@@ -14,3 +14,9 @@ class ChatResponse(BaseModel):
     """Schema for the chat response."""
 
     response: list[dict]
+
+
+class SessionId(BaseModel):
+    """Schema for the session id."""
+
+    session_id: str

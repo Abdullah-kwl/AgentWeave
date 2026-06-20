@@ -3,8 +3,8 @@
 from fastapi import APIRouter
 from fastapi import HTTPException
 from fastapi.responses import StreamingResponse
-from app.api.schemas import Messages, ChatResponse
-from app.api.helper import chat_with_agent, chat_with_agent_stream
+from app.api.schemas import Messages, ChatResponse, SessionId
+from app.api.helper import chat_with_agent, chat_with_agent_stream, old_chat_history
 
 router = APIRouter()
 
@@ -30,3 +30,13 @@ async def stream_chat(message: Messages):
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@router.post("/chat/history")
+async def get_chat_history(session_id: SessionId):
+    """Endpoint for retrieving chat history for a given session."""
+    try:
+        history = await old_chat_history(session_id.session_id)
+        return {"response": history}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) from e
