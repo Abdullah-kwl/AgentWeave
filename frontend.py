@@ -16,17 +16,67 @@ FASTAPI_URL = app_config.fastapi_url  # pylint: disable=no-name-in-module
 FASTAPI_STREAM_URL = app_config.fastapi_stream_url  # pylint: disable=no-name-in-module
 
 
+# ----------------------------------utilities--------------------------------------------------
+
+
+def get_session_id():
+    """Get the current session ID from session state."""
+    session_id = str(uuid.uuid4())
+    return session_id
+
+
+def add_session_id(session_id: str):
+    """Add a session ID to the list of all sessions."""
+    if session_id not in st.session_state.all_sessions:
+        st.session_state.all_sessions.append(session_id)
+
+
 # SESSION STATE
 def init_session():
     """Initialize session state for messages and session ID."""
     if "session_id" not in st.session_state:
-        st.session_state.session_id = str(uuid.uuid4())
+        st.session_state.session_id = get_session_id()
+
+    if "all_sessions" not in st.session_state:
+        st.session_state.all_sessions = []
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
 
 init_session()
+add_session_id(st.session_state.session_id)
+
+
+def reset_session():
+    """Reset the session state for messages and session ID."""
+    st.session_state.session_id = get_session_id()
+    add_session_id(st.session_state.session_id)
+    st.session_state.messages = []
+
+
+# ----------------------------------Main Functionalities------------------------------------------
+
+
+# BACKND CALL FOR HISTORY
+def get_chat_history(session_id: str) -> list:
+    """Fetch chat history for a given session ID from the backend."""
+    try:
+        response = requests.post(
+            "http://127.0.0.1:8000/api/v1/chat/history",
+            json={"session_id": session_id},
+            timeout=30,
+        )
+        response.raise_for_status()
+        data = response.json()
+        return data.get("response", [])
+    except requests.exceptions.ConnectionError:
+        st.error("⚠️ Backend not reachable.")
+    except requests.exceptions.Timeout:
+        st.error("⚠️ Request timed out.")
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        st.error(f"⚠️ Unexpected error: {e}")
+    return []
 
 
 # BACKEND CALL
@@ -135,15 +185,31 @@ if prompt:
 
 # SIDEBAR
 with st.sidebar:
-    st.header("⚙️ Controls")
+    st.title("⚙️ Controls")
 
-    if st.button("🗑️ Clear chat", use_container_width=True):
-        st.session_state.messages = []
-        st.session_state.session_id = str(uuid.uuid4())
+    if st.button("New chat", use_container_width=True):
+        reset_session()
+        st.rerun()
+
+    if st.button("🗑️ Delete chat", use_container_width=True):
+        current_id = st.session_state.session_id
+        if current_id in st.session_state.all_sessions:
+            st.session_state.all_sessions.remove(current_id)
+        reset_session()  # creates new session_id and clears messages
         st.rerun()
 
     st.divider()
-    st.markdown("**Backend:** `localhost:8000`")
-    st.markdown("**Model:** LangChain Agent")
+    st.header("My Conversations")
+    # show all session IDs
+    for s_id in st.session_state.all_sessions:
+        is_active = s_id == st.session_state.session_id
+        label = f"{'▶ ' if is_active else ''}{s_id[:8]}..."  # truncate for readability
+        if st.button(label, key=s_id, use_container_width=True):
+            history = get_chat_history(s_id)
+            if history:
+                st.session_state.session_id = s_id
+                # map backend format to local messages format
+                st.session_state.messages = history
+                st.rerun()
 
-# uv run streamlit run frontend.py
+# uv run streamlit run frontend_v2.py
