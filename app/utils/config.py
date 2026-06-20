@@ -28,7 +28,7 @@ class OtherConfig(BaseModel):
 class Config:
     """Defines the main configuration settings for the application."""
 
-    model: str = "llama-3.3-70b-versatile"
+    model: str = "qwen/qwen3.6-27b"
     temperature: float = 0.7
     max_tokens: int = 1000
 
