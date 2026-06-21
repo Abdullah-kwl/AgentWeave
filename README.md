@@ -284,10 +284,10 @@ AgentWeave solves this with a **rolling summary** strategy implemented in `app/a
 ### How it works
 
 ```
-Turn 1–14   All messages accumulate normally
+Turn 1–9   All messages accumulate normally
             LLM sees: [sys_msg] + [msg_0 … msg_N]
 
-Turn 15     THRESHOLD hit → summarise_and_trim() runs
+Turn 10     THRESHOLD hit → summarise_and_trim() runs
             ├─ Slice msg[0 : N-5] is summarised by the plain model
             ├─ context_start advances to N-5
             └─ summarize_at advances to N + SUMMARIZE_STEP
@@ -304,7 +304,7 @@ The LLM always receives **two system messages**:
 
 | Constant | Value | Meaning |
 |---|---|---|
-| `THRESHOLD` | `15` | Total messages before first summarisation |
+| `THRESHOLD` | `10` | Total messages before first summarisation |
 | `KEEP_RECENT` | `5` | Messages kept in the live context window |
 | `SUMMARIZE_STEP` | `10` | Messages until the next summarisation pass |
 
