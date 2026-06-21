@@ -25,12 +25,29 @@ class OtherConfig(BaseModel):
 
 
 @dataclass
-class Config:
-    """Defines the main configuration settings for the application."""
+class LLMConfig:
+    """Defines the LLM configuration settings for the application."""
 
     model: str = "qwen/qwen3.6-27b"
     temperature: float = 0.7
     max_tokens: int = 1000
+
+
+@dataclass
+class StmConfig:
+    """Short-term memory thresholds that control the rolling-summary behaviour.
+
+    Attributes:
+        threshold: Total message count that triggers a summarisation pass.
+        keep_recent: Number of recent messages kept in the live context window
+            after trimming.  Older messages are folded into the rolling summary.
+        summarize_step: How many additional messages must accumulate before the
+            next summarisation pass is triggered after the current one.
+    """
+
+    threshold: int = 10
+    keep_recent: int = 5
+    summarize_step: int = 10
 
 
 @dataclass
@@ -42,6 +59,7 @@ class AppConfig:
 
 
 secrets = Secrets()
-config = Config()
+llm_config = LLMConfig()
+stm_config = StmConfig()
 other = OtherConfig()
 app_config = AppConfig()
