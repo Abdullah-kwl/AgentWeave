@@ -28,6 +28,11 @@ We use version format: `MAJOR.MINOR.PATCH`
 
 ## [1.5.0] - 2026-06-10
 ### Added
+- Added the `STM Managment System` to Agent
+- helps to reduce cost and token usage
+
+## [1.5.0] - 2026-06-10
+### Added
 - Added the `tools` to Agent
 
 ## [1.4.0] - 2026-05-25
