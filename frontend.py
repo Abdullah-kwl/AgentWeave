@@ -212,4 +212,4 @@ with st.sidebar:
                 st.session_state.messages = history
                 st.rerun()
 
-# uv run streamlit run frontend_v2.py
+# uv run streamlit run frontend.py
